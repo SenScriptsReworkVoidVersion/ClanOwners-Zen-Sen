@@ -1,0 +1,804 @@
+--《Void | Priv∆te §crîpt》 by VOID_Sen | White-Black Theme | Rayfield-Style Loading (5s) | Animated Lightning Border | Sidebar Tabs Fit | Draggable Window | All tabs/buttons/logic | Window persists on death | No lag/crash from toggles | Draggable Show/Hide Button
+
+local lp,rs,ws,uis,runs=game:GetService("Players").LocalPlayer,game:GetService("ReplicatedStorage"),workspace,game:GetService("UserInputService"),game:GetService("RunService")
+local C={
+    BG=Color3.fromRGB(20,20,20),
+    HEAD=Color3.fromRGB(30,30,30),
+    SIDE=Color3.fromRGB(35,35,35),
+    TAB=Color3.fromRGB(24,24,24),
+    PANEL=Color3.fromRGB(32,32,32),
+    SB=Color3.fromRGB(50,50,50),
+    SBSEL=Color3.fromRGB(255,255,255),
+    SBTXT=Color3.fromRGB(180,180,180),
+    SBTXTSEL=Color3.fromRGB(30,30,30),
+    BTN=Color3.fromRGB(60,60,60),
+    BTNTXT=Color3.fromRGB(250,250,250),
+    TGON=Color3.fromRGB(255,255,255),
+    TGOFF=Color3.fromRGB(50,50,50),
+    TGKON=Color3.fromRGB(20,20,20),
+    TGKOFF=Color3.fromRGB(200,200,200),
+    LBL=Color3.fromRGB(255,255,255),
+    INBG=Color3.fromRGB(36,36,36),
+    INTXT=Color3.fromRGB(220,220,220),
+    DRP=Color3.fromRGB(80,80,80),
+}
+local tabList={{"Misc","⚡"},{"Farm","🔥"},{"Teleport","🚀"},{"Kills","⚔️"},{"TimeSet","🕒"},{"Crystal","🔮"},{"Chests","🗝️"},{"Proteins","🍳"},{"Gyms","🏋️‍♂️"}}
+
+-- RAYFIELD STYLE LOADING (5 seconds)
+pcall(function() game:GetService("Players").LocalPlayer.PlayerGui.VoidLoadingGui:Destroy() end)
+loadstring(game:HttpGet('https://raw.githubusercontent.com/SenScriptsReworkVoidVersion/ClanOwners-Zen-Sen/refs/heads/main/Sehshsh'))()
+
+-- MAIN UI
+local g=Instance.new("ScreenGui")
+g.Name="VoidPrivateScript"
+g.IgnoreGuiInset=true
+g.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
+g.ResetOnSpawn=false
+g.Parent=lp:WaitForChild("PlayerGui")
+
+local showIcon, hideIcon = "⚡", "✖"
+local showHideGui = Instance.new("ScreenGui")
+showHideGui.Name = "VoidShowHideGui"
+showHideGui.IgnoreGuiInset = true
+showHideGui.ResetOnSpawn = false
+showHideGui.Parent = lp:WaitForChild("PlayerGui")
+local showHideBtn = Instance.new("TextButton")
+showHideBtn.Name = "ShowHideButton"
+showHideBtn.Size = UDim2.new(0, 44, 0, 44)
+showHideBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
+showHideBtn.TextColor3 = Color3.fromRGB(30,30,30)
+showHideBtn.Font = Enum.Font.GothamBlack
+showHideBtn.TextSize = 28
+showHideBtn.Text = hideIcon
+showHideBtn.BorderSizePixel = 0
+Instance.new("UICorner", showHideBtn).CornerRadius = UDim.new(1, 0)
+showHideBtn.Parent = showHideGui
+
+local windowWidth, windowHeight = 400, 300
+local w=Instance.new("Frame",g)
+w.Size=UDim2.new(0,windowWidth,0,windowHeight)
+w.Position=UDim2.new(.5,-windowWidth//2,.5,-windowHeight//2)
+w.BackgroundColor3=C.BG
+w.Active=true
+w.Draggable=true
+w.BorderSizePixel=0
+Instance.new("UICorner",w).CornerRadius=UDim.new(0,18)
+for _,edge in ipairs({"Top","Bottom","Left","Right"}) do
+    local edgeFrame = Instance.new("Frame",w)
+    edgeFrame.Name = "Lightning"..edge
+    edgeFrame.BackgroundTransparency = 1
+    edgeFrame.BorderSizePixel = 0
+    if edge=="Top" or edge=="Bottom" then
+        edgeFrame.Size = UDim2.new(1,0,0,8)
+        edgeFrame.Position = edge=="Top" and UDim2.new(0,0,0,0) or UDim2.new(0,0,1,-8)
+    else
+        edgeFrame.Size = UDim2.new(0,8,1,-16)
+        edgeFrame.Position = edge=="Left" and UDim2.new(0,0,0,8) or UDim2.new(1,-8,0,8)
+    end
+    edgeFrame.ZIndex = 4
+    for i=1,7 do
+        local bolt = Instance.new("Frame",edgeFrame)
+        if edge=="Top" or edge=="Bottom" then
+            bolt.Size = UDim2.new(0, math.random(7,24), 0, math.random(4,8))
+            bolt.Position = UDim2.new(0, (i-1)*54+math.random(-3,3), 0, edge=="Top" and 0 or 0)
+        else
+            bolt.Size = UDim2.new(0, math.random(4,7), 0, math.random(8,22))
+            bolt.Position = UDim2.new(0,0,0, (i-1)*32+math.random(-2,2))
+        end
+        bolt.BackgroundColor3 = Color3.fromRGB(255,255,255)
+        bolt.BorderSizePixel = 0
+        bolt.BackgroundTransparency = .13
+        Instance.new("UICorner", bolt).CornerRadius = UDim.new(1,0)
+        task.spawn(function()
+            while w.Parent do
+                bolt.Size = edge=="Top" or edge=="Bottom"
+                    and UDim2.new(0, math.random(7,24), 0, math.random(4,8))
+                    or UDim2.new(0, math.random(4,7), 0, math.random(8,22))
+                if edge=="Top" or edge=="Bottom" then
+                    bolt.Position = UDim2.new(0, (i-1)*54+math.random(-3,3), 0, 0)
+                else
+                    bolt.Position = UDim2.new(0,0,0, (i-1)*32+math.random(-2,2))
+                end
+                bolt.BackgroundColor3 = Color3.fromRGB(255,255,255)
+                task.wait(math.random(5,12)/60)
+            end
+        end)
+    end
+end
+local function updateShowHideBtnPos()
+    if w and w.Parent and w.Visible then
+        local absPos = w.AbsolutePosition
+        local absSize = w.AbsoluteSize
+        local btnX = absPos.X + absSize.X + 14
+        local btnY = absPos.Y + (absSize.Y/2) - 22
+        showHideBtn.Position = UDim2.new(0, btnX, 0, btnY)
+        showHideBtn.Visible = true
+    else
+        showHideBtn.Visible = true
+    end
+end
+w:GetPropertyChangedSignal("AbsolutePosition"):Connect(updateShowHideBtnPos)
+w:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateShowHideBtnPos)
+g:GetPropertyChangedSignal("Enabled"):Connect(updateShowHideBtnPos)
+w:GetPropertyChangedSignal("Visible"):Connect(updateShowHideBtnPos)
+updateShowHideBtnPos()
+
+local h=Instance.new("Frame",w)
+h.Size=UDim2.new(1,0,0,42)
+h.BackgroundColor3=C.HEAD
+h.BorderSizePixel=0
+Instance.new("UICorner",h).CornerRadius=UDim.new(0,18)
+local title=Instance.new("TextLabel",h)
+title.Size=UDim2.new(1,-100,0,28)
+title.Position=UDim2.new(0,20,0,2)
+title.BackgroundTransparency=1
+title.Text="Void | Priv∆te §crîpt"
+title.TextColor3=Color3.fromRGB(255,255,255)
+title.Font=Enum.Font.GothamBlack
+title.TextSize=20
+title.TextXAlignment=Enum.TextXAlignment.Left
+title.TextStrokeTransparency = 0.7
+local subtitle=Instance.new("TextLabel",h)
+subtitle.Size=UDim2.new(1,-100,0,14)
+subtitle.Position=UDim2.new(0,20,0,26)
+subtitle.BackgroundTransparency=1
+subtitle.Text="by VOID_Sen"
+subtitle.TextColor3=Color3.fromRGB(220,220,220)
+subtitle.Font=Enum.Font.GothamBold
+subtitle.TextSize=12
+subtitle.TextXAlignment=Enum.TextXAlignment.Left
+subtitle.TextStrokeTransparency = 0.85
+local close=Instance.new("TextButton",h)
+close.Size,close.Position=UDim2.new(0,32,0,32),UDim2.new(1,-42,0,6)
+close.BackgroundColor3=Color3.fromRGB(255,255,255)
+close.TextColor3=Color3.fromRGB(20,20,20)
+close.Font=Enum.Font.GothamBlack
+close.TextSize=20
+close.Text="×"
+close.BorderSizePixel=0
+Instance.new("UICorner",close).CornerRadius=UDim.new(1,0)
+
+local sidebar=Instance.new("ScrollingFrame",w)
+sidebar.Name="Sidebar"
+sidebar.Size=UDim2.new(0,60,1,-42)
+sidebar.Position=UDim2.new(0,0,0,42)
+sidebar.BackgroundColor3=C.SIDE
+sidebar.BorderSizePixel=0
+sidebar.ScrollBarThickness=6
+sidebar.CanvasSize=UDim2.new(0,0,0, #tabList*36+12)
+sidebar.AutomaticCanvasSize=Enum.AutomaticSize.Y
+Instance.new("UICorner",sidebar).CornerRadius=UDim.new(0,8)
+local sidebarLayout=Instance.new("UIListLayout",sidebar)
+sidebarLayout.SortOrder=Enum.SortOrder.LayoutOrder
+sidebarLayout.FillDirection=Enum.FillDirection.Vertical
+sidebarLayout.Padding=UDim.new(0,3)
+
+local contentArea=Instance.new("Frame",w)
+contentArea.Name="ContentArea"
+contentArea.Size=UDim2.new(1,-60,1,-42)
+contentArea.Position=UDim2.new(0,60,0,42)
+contentArea.BackgroundColor3=C.TAB
+Instance.new("UICorner",contentArea).CornerRadius=UDim.new(0,12)
+
+local tabBtns,tabFrames,toggles={}, {}, {}
+
+for i,v in ipairs(tabList)do
+    local b=Instance.new("TextButton",sidebar)
+    b.Name="TabButton_"..v[1]
+    b.Size=UDim2.new(1,-8,0,30)
+    b.BackgroundColor3=i==1 and C.SBSEL or C.SB
+    b.TextColor3=i==1 and C.SBTXTSEL or C.SBTXT
+    b.Text=v[2]
+    b.Font=Enum.Font.GothamBlack
+    b.TextSize=18
+    b.TextWrapped=true
+    b.BorderSizePixel=0
+    Instance.new("UICorner",b).CornerRadius=UDim.new(0.5,0)
+    tabBtns[v[1]]=b
+
+    local f=Instance.new("ScrollingFrame",contentArea)
+    f.Name="Tab_"..v[1]
+    f.Size=UDim2.new(1,0,1,0)
+    f.Position=UDim2.new(0,0,0,0)
+    f.BackgroundTransparency=1
+    f.BorderSizePixel=0
+    f.Visible=i==1
+    f.ScrollBarThickness=7
+    f.AutomaticCanvasSize=Enum.AutomaticSize.Y
+    f.ScrollingDirection=Enum.ScrollingDirection.Y
+    Instance.new("UIListLayout",f).SortOrder=Enum.SortOrder.LayoutOrder
+    tabFrames[v[1]]=f
+end
+
+-- UI Controls
+local function makeToggle(tab,lbl,cb)
+    local row=Instance.new("Frame",tab)row.Size=UDim2.new(0,140,0,22)row.BackgroundTransparency=1
+    local bg=Instance.new("Frame",row)bg.Size=UDim2.new(0,34,0,14)bg.Position=UDim2.new(0,0,0,4)bg.BackgroundColor3=C.TGOFF bg.BackgroundTransparency=0.03 Instance.new("UICorner",bg).CornerRadius=UDim.new(1,0)
+    local k=Instance.new("Frame",bg)k.Size=UDim2.new(0,12,0,10)k.Position=UDim2.new(0,2,0,2)k.BackgroundColor3=C.TGKOFF Instance.new("UICorner",k).CornerRadius=UDim.new(1,0)
+    local b=Instance.new("TextButton",bg)b.Size=UDim2.new(1,0,1,0)b.BackgroundTransparency=1 b.Text=""
+    local lab=Instance.new("TextLabel",row)lab.Size=UDim2.new(1,-38,1,0)lab.Position=UDim2.new(0,38,0,0)lab.BackgroundTransparency=1 lab.Text=lbl lab.TextColor3=C.LBL lab.Font=Enum.Font.GothamBold lab.TextSize=11 lab.TextXAlignment=Enum.TextXAlignment.Left
+    local on,conn
+    b.MouseButton1Click:Connect(function()
+        on=not on
+        bg.BackgroundColor3=on and C.TGON or C.TGOFF
+        k.Position=on and UDim2.new(1,-12,0,2)or UDim2.new(0,2,0,2)
+        k.BackgroundColor3=on and C.TGKON or C.TGKOFF
+        if conn then pcall(function()conn:Disconnect()end)conn=nil end
+        if on then conn=cb(function()on=false;bg.BackgroundColor3=C.TGOFF;k.Position=UDim2.new(0,2,0,2);k.BackgroundColor3=C.TGKOFF end)end
+    end)
+    toggles[#toggles+1]=function()if conn then pcall(function()conn:Disconnect()end)end end
+    bg.BackgroundColor3,k.Position,k.BackgroundColor3=C.TGOFF,UDim2.new(0,2,0,2),C.TGKOFF
+    return{toggle=b,state=function()return on end,set=function(val)if on~=val then b:Activate()end end}
+end
+local function makeBtn(tab,txt,cb)
+    local b=Instance.new("TextButton",tab)b.Size=UDim2.new(1,0,0,19)b.BackgroundColor3=C.BTN b.TextColor3=C.BTNTXT b.Text=txt b.Font=Enum.Font.GothamBlack b.TextSize=13 b.BorderSizePixel=0 b.AutoButtonColor=true Instance.new("UICorner",b).CornerRadius=UDim.new(1,0)
+    b.MouseButton1Click:Connect(function()pcall(cb)end)
+    return b
+end
+local function makeBox(tab,ph)
+    local box=Instance.new("TextBox",tab)box.Size=UDim2.new(0,68,0,17)box.BackgroundColor3=C.INBG box.TextColor3=C.INTXT box.PlaceholderText=ph box.Font=Enum.Font.Gotham box.TextSize=12 box.BorderSizePixel=0 box.Text=""
+    return box
+end
+
+-- MISC TAB
+do local t=tabFrames.Misc
+    local wsBox=makeBox(t,"WalkSpeed")
+    wsBox.FocusLost:Connect(function(e)if e then local v=tonumber(wsBox.Text)if v and lp.Character and lp.Character:FindFirstChildOfClass("Humanoid")then lp.Character:FindFirstChildOfClass("Humanoid").WalkSpeed=v end end end)
+    local jpBox=makeBox(t,"JumpPower")
+    jpBox.FocusLost:Connect(function(e)if e then local v=tonumber(jpBox.Text)if v and lp.Character and lp.Character:FindFirstChildOfClass("Humanoid")then lp.Character:FindFirstChildOfClass("Humanoid").JumpPower=v end end end)
+    local szBox=makeBox(t,"Size")
+    makeBtn(t,"Reset WS",function()local h=lp.Character and lp.Character:FindFirstChildOfClass("Humanoid")if h then h.WalkSpeed=16 end end)
+    makeBtn(t,"Reset JP",function()local h=lp.Character and lp.Character:FindFirstChildOfClass("Humanoid")if h then h.JumpPower=50 end end)
+    makeBtn(t,"Small",function()rs.rEvents.changeSpeedSizeRemote:InvokeServer("changeSize",1)end)
+    makeToggle(t,"Infinite Jump",function()
+        return uis.JumpRequest:Connect(function()
+            local c=lp.Character
+            if c and c:FindFirstChildOfClass("Humanoid")then
+                pcall(function()c:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)end)
+            end
+        end)
+    end)
+    makeToggle(t,"Anti AFK",function()
+        local thread=coroutine.create(function()
+            pcall(function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/ZchedrickTheExploiter/Anti-Afk-by-Sen/refs/heads/main/Anti-AFK-Script-NiSen/Wind.lua"))()
+            end)
+        end)
+        coroutine.resume(thread)
+        return {Disconnect=function()end}
+    end)
+    makeToggle(t,"Auto Speed",function()
+        return runs.RenderStepped:Connect(function()
+            pcall(function()
+                rs.Remotes.changeSize:FireServer("changeSize",tonumber(szBox and szBox.Text)or 1)
+            end)
+        end)
+    end)
+    do
+        local lockConn
+        local locked=false
+        local lockedPos
+        makeToggle(t,"Lock Client Position",function()
+            locked=true
+            if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+                lockedPos=lp.Character.HumanoidRootPart.Position
+            end
+            lockConn=runs.Heartbeat:Connect(function()
+                if locked and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+                    local hrp=lp.Character.HumanoidRootPart
+                    if (lockedPos) then
+                        hrp.CFrame=CFrame.new(lockedPos)
+                    end
+                end
+            end)
+            return {Disconnect=function()locked=false;if lockConn then lockConn:Disconnect()lockConn=nil end end}
+        end)
+    end
+    makeToggle(t,"Auto Fast Pushups",function()
+        local running=true
+        local thread=coroutine.create(function()
+            while running do
+                pcall(function()
+                    local pushup=lp.Backpack:FindFirstChild("Pushups")if pushup then pushup.Parent=lp.Character end
+                    if lp:FindFirstChild("muscleEvent")then
+                        for _=1,20 do lp.muscleEvent:FireServer("rep")end
+                    end
+                end)
+                task.wait()
+            end
+        end)
+        coroutine.resume(thread)
+        return {Disconnect=function()running=false end}
+    end)
+    makeToggle(t,"Auto Fast Situps",function()
+        local running=true
+        local thread=coroutine.create(function()
+            while running do
+                pcall(function()
+                    local situp=lp.Backpack:FindFirstChild("Situps")if situp then situp.Parent=lp.Character end
+                    if lp:FindFirstChild("muscleEvent")then
+                        for _=1,20 do lp.muscleEvent:FireServer("rep")end
+                    end
+                end)
+                task.wait()
+            end
+        end)
+        coroutine.resume(thread)
+        return {Disconnect=function()running=false end}
+    end)
+    makeToggle(t,"Auto Fast Weight",function()
+        local running=true
+        local thread=coroutine.create(function()
+            while running do
+                pcall(function()
+                    local weight=lp.Backpack:FindFirstChild("Weight")if weight then weight.Parent=lp.Character end
+                    if lp:FindFirstChild("muscleEvent")then
+                        for _=1,20 do lp.muscleEvent:FireServer("rep")end
+                    end
+                end)
+                task.wait()
+            end
+        end)
+        coroutine.resume(thread)
+        return {Disconnect=function()running=false end}
+    end)
+    makeToggle(t,"Auto Fast Handstands",function()
+        local running=true
+        local thread=coroutine.create(function()
+            while running do
+                pcall(function()
+                    local handstand=lp.Backpack:FindFirstChild("Handstands")if handstand then handstand.Parent=lp.Character end
+                    if lp:FindFirstChild("muscleEvent")then
+                        for _=1,20 do lp.muscleEvent:FireServer("rep")end
+                    end
+                end)
+                task.wait()
+            end
+        end)
+        coroutine.resume(thread)
+        return {Disconnect=function()running=false end}
+    end)
+end
+
+-- FARM TAB
+do local t=tabFrames.Farm
+    makeToggle(t,"Auto Weight",function()
+        return runs.Heartbeat:Connect(function()
+            pcall(function()
+                for _,v in ipairs(lp.Backpack:GetChildren())do if v:IsA("Tool")and v.Name=="Weight"then v.Parent=lp.Character end end
+                if lp:FindFirstChild("muscleEvent")then for _=1,10 do lp.muscleEvent:FireServer("rep")end end
+            end)
+        end)
+    end)
+    makeToggle(t,"Auto Fast Punch",function()
+        local running=true
+        local thread=coroutine.create(function()
+            while running do
+                pcall(function()
+                    local punch=lp.Backpack:FindFirstChild("Punch")if punch then punch.Parent=lp.Character end
+                    if lp:FindFirstChild("muscleEvent")then lp.muscleEvent:FireServer("punch","rightHand")lp.muscleEvent:FireServer("punch","leftHand")for _=1,10 do lp.muscleEvent:FireServer("rep")end end
+                end)
+                task.wait()
+            end
+        end)
+        coroutine.resume(thread)
+        return {Disconnect=function()running=false end}
+    end)
+    makeToggle(t,"Auto Pushups",function()
+        return runs.Heartbeat:Connect(function()
+            pcall(function()
+                for _,v in ipairs(lp.Backpack:GetChildren())do if v:IsA("Tool")and v.Name=="Pushups"then v.Parent=lp.Character end end
+                if lp:FindFirstChild("muscleEvent")then for _=1,10 do lp.muscleEvent:FireServer("rep")end end
+            end)
+        end)
+    end)
+    makeToggle(t,"Auto Situps",function()
+        return runs.Heartbeat:Connect(function()
+            pcall(function()
+                for _,v in ipairs(lp.Backpack:GetChildren())do if v:IsA("Tool")and v.Name=="Situps"then v.Parent=lp.Character end end
+                if lp:FindFirstChild("muscleEvent")then for _=1,10 do lp.muscleEvent:FireServer("rep")end end
+            end)
+        end)
+    end)
+    makeToggle(t,"Auto Handstands",function()
+        return runs.Heartbeat:Connect(function()
+            pcall(function()
+                for _,v in ipairs(lp.Backpack:GetChildren())do if v:IsA("Tool")and v.Name=="Handstands"then v.Parent=lp.Character end end
+                if lp:FindFirstChild("muscleEvent")then for _=1,10 do lp.muscleEvent:FireServer("rep")end end
+            end)
+        end)
+    end)
+    for _,rock in ipairs({{"Legend Gym Rock",1000000},{"Muscle King Gym Rock",5000000},{"Ancient Jungle Rock",10000000},{"Tiny Rock",0},{"Punching Rock",10},{"Large Rock",100},{"Golden Rock",5000},{"Frozen Rock",150000},{"Mythical Rock",400000},{"Eternal Rock",750000}})do
+        makeToggle(t,"Auto "..rock[1],function()
+            return runs.Heartbeat:Connect(function()
+                pcall(function()
+                    local dur=lp:FindFirstChild("Durability")and lp.Durability.Value or 0
+                    if dur>=rock[2]then
+                        for _,v in ipairs(ws:GetDescendants())do
+                            if v.Name=="neededDurability"and v.Value==rock[2]and lp.Character and lp.Character:FindFirstChild("LeftHand")and lp.Character:FindFirstChild("RightHand")then
+                                pcall(function()
+                                    firetouchinterest(v.Parent.Rock,lp.Character.RightHand,0)firetouchinterest(v.Parent.Rock,lp.Character.RightHand,1)
+                                    firetouchinterest(v.Parent.Rock,lp.Character.LeftHand,0)firetouchinterest(v.Parent.Rock,lp.Character.LeftHand,1)
+                                end)
+                            end
+                        end
+                    end
+                end)
+            end)
+        end)
+    end
+    local rebirthStop=math.huge
+    local box=Instance.new("TextBox",t)box.Size=UDim2.new(0,44,0,16)box.BackgroundColor3=C.INBG box.TextColor3=C.INTXT box.PlaceholderText="StopAt"box.Text=""box.Font=Enum.Font.Gotham box.TextSize=12 box.BorderSizePixel=0
+    local b=Instance.new("TextButton",t)b.Size=UDim2.new(0,48,0,16)b.BackgroundColor3=C.BTN b.TextColor3=C.BTNTXT b.Text="Set"b.Font=Enum.Font.GothamBold b.TextSize=12 b.BorderSizePixel=0
+    b.MouseButton1Click:Connect(function()local v=tonumber(box.Text)rebirthStop=v and v>0 and v or math.huge end)
+    makeToggle(t,"Fast Rebirth",function()
+        return runs.Heartbeat:Connect(function()
+            pcall(function()
+                local s=lp:FindFirstChild("leaderstats")and lp.leaderstats:FindFirstChild("Rebirths")
+                if s and tonumber(s.Value)>=rebirthStop then return end
+                if lp:FindFirstChild("rebirthEvent")then lp.rebirthEvent:FireServer()end
+            end)
+        end)
+    end)
+end
+
+-- TELEPORT TAB
+do local t=tabFrames.Teleport
+    local function addTeleBtn(text,pos)
+        local b=Instance.new("TextButton",t)b.Size=UDim2.new(0,120,0,20)b.BackgroundColor3=C.BTN b.TextColor3=C.BTNTXT b.Text=text b.Font=Enum.Font.GothamBold b.TextSize=12 b.BorderSizePixel=0
+        b.MouseButton1Click:Connect(function()pcall(function()local char=lp.Character;if char and char:FindFirstChild("HumanoidRootPart")then char.HumanoidRootPart.CFrame=CFrame.new(pos)end end)end)
+    end
+    local rejoinBtn=Instance.new("TextButton",t)rejoinBtn.Size=UDim2.new(0,120,0,20)rejoinBtn.BackgroundColor3=C.BTN rejoinBtn.TextColor3=C.BTNTXT rejoinBtn.Text="Rejoin"rejoinBtn.Font=Enum.Font.GothamBold rejoinBtn.TextSize=12 rejoinBtn.BorderSizePixel=0
+    rejoinBtn.MouseButton1Click:Connect(function()pcall(function()game:GetService("TeleportService"):Teleport(game.PlaceId,lp)end)end)
+    addTeleBtn("Legends gym",Vector3.new(4298.60059,1121.89404,-3898.68066))
+    addTeleBtn("Mythical gym",Vector3.new(2386.89038,139.607956,1094.26367))
+    addTeleBtn("Frost gym",Vector3.new(-2752.56543,125.822533,-386.73703))
+    addTeleBtn("Eternal gym",Vector3.new(-6917.79248,182.352829,-1336.63928))
+    addTeleBtn("Tiny island",Vector3.new(-4.25301933,220.993713,1963.60168))
+    addTeleBtn("Brawl aura 1",Vector3.new(985.910645,163.795364,-7037.80615))
+    addTeleBtn("Brawl aura 2",Vector3.new(4466.75342,334.973602,-8425.74512))
+    addTeleBtn("Brawl aura 3",Vector3.new(-1901.87695,251.895432,-5899.64795))
+end
+
+-- KILLS TAB
+do local t=tabFrames.Kills
+    local whitelist,targetPlayer={},nil
+    local whitelistBox=Instance.new("TextBox",t)whitelistBox.Size=UDim2.new(0,100,0,16)whitelistBox.Position=UDim2.new(0,0,0,24)whitelistBox.PlaceholderText="Whitelist User"whitelistBox.Text=""whitelistBox.Font=Enum.Font.Gotham whitelistBox.TextSize=10 whitelistBox.BackgroundColor3=C.INBG whitelistBox.TextColor3=C.INTXT whitelistBox.ClearTextOnFocus=false
+    local addWhiteBtn=Instance.new("TextButton",t)addWhiteBtn.Size=UDim2.new(0,40,0,16)addWhiteBtn.Position=UDim2.new(0,104,0,24)addWhiteBtn.Text="Add"addWhiteBtn.Font=Enum.Font.GothamBold addWhiteBtn.TextSize=10 addWhiteBtn.BackgroundColor3=C.BTN addWhiteBtn.TextColor3=C.BTNTXT addWhiteBtn.BorderSizePixel=0
+    addWhiteBtn.MouseButton1Click:Connect(function()local name=whitelistBox.Text if name~=""and not whitelist[name:lower()]then whitelist[name:lower()]=true end whitelistBox.Text=""end)
+    local clearWhiteBtn=Instance.new("TextButton",t)clearWhiteBtn.Size=UDim2.new(0,32,0,16)clearWhiteBtn.Position=UDim2.new(0,148,0,24)clearWhiteBtn.Text="Clear"clearWhiteBtn.Font=Enum.Font.GothamBold clearWhiteBtn.TextSize=10 clearWhiteBtn.BackgroundColor3=C.BTN clearWhiteBtn.TextColor3=C.BTNTXT clearWhiteBtn.BorderSizePixel=0
+    clearWhiteBtn.MouseButton1Click:Connect(function()whitelist={}end)
+    local targetBox=Instance.new("TextBox",t)targetBox.Size=UDim2.new(0,100,0,16)targetBox.Position=UDim2.new(0,0,0,44)targetBox.PlaceholderText="Target Username"targetBox.Text=""targetBox.Font=Enum.Font.Gotham targetBox.TextSize=10 targetBox.BackgroundColor3=C.INBG targetBox.TextColor3=C.INTXT targetBox.ClearTextOnFocus=false
+    local setTargetBtn=Instance.new("TextButton",t)setTargetBtn.Size=UDim2.new(0,40,0,16)setTargetBtn.Position=UDim2.new(0,104,0,44)setTargetBtn.Text="Set"setTargetBtn.Font=Enum.Font.GothamBold setTargetBtn.TextSize=10 setTargetBtn.BackgroundColor3=C.BTN setTargetBtn.TextColor3=C.BTNTXT setTargetBtn.BorderSizePixel=0
+    setTargetBtn.MouseButton1Click:Connect(function()local name=targetBox.Text if name~=""then targetPlayer=name:lower()end end)
+    local clearTargetBtn=Instance.new("TextButton",t)clearTargetBtn.Size=UDim2.new(0,32,0,16)clearTargetBtn.Position=UDim2.new(0,148,0,44)clearTargetBtn.Text="Clear"clearTargetBtn.Font=Enum.Font.GothamBold clearTargetBtn.TextSize=10 clearTargetBtn.BackgroundColor3=C.BTN clearTargetBtn.TextColor3=C.BTNTXT clearTargetBtn.BorderSizePixel=0
+    clearTargetBtn.MouseButton1Click:Connect(function()targetPlayer=nil;targetBox.Text=""end)
+    makeToggle(t,"Auto Kill All",function()
+        return runs.Heartbeat:Connect(function()
+            pcall(function()
+                local char=lp.Character;if not char then return end
+                local punch=lp.Backpack:FindFirstChild("Punch")if punch then punch.Parent=char end
+                local rh=char:FindFirstChild("RightHand")local lh=char:FindFirstChild("LeftHand")if not(rh and lh)then return end
+                for _,plr in ipairs(game.Players:GetPlayers())do
+                    if plr~=lp and plr.Character then
+                        local name=plr.Name:lower()
+                        if(not whitelist[name])and(not targetPlayer or targetPlayer==name)then
+                            for _,hand in ipairs{rh,lh}do
+                                for _,part in ipairs(plr.Character:GetChildren())do
+                                    if part:IsA("BasePart")then
+                                        pcall(function()
+                                            firetouchinterest(hand,part,0)firetouchinterest(hand,part,1)
+                                        end)
+                                    end
+                                end
+                            end
+                            local ev=lp:FindFirstChild("muscleEvent")
+                            if ev then ev:FireServer("punch","rightHand")ev:FireServer("punch","leftHand")end
+                        end
+                    end
+                end
+            end)
+        end)
+    end)
+end
+
+-- TIMESET TAB
+do local t=tabFrames.TimeSet
+    local function makeBtn(txt,val)
+        local b=Instance.new("TextButton",t)b.Size=UDim2.new(0,60,0,14)b.BackgroundColor3=C.BTN b.TextColor3=C.BTNTXT b.Text=txt b.Font=Enum.Font.GothamBold b.TextSize=11 b.BorderSizePixel=0
+        b.MouseButton1Click:Connect(function()pcall(function()game.Lighting.ClockTime=val end)end)
+    end
+    makeBtn("Day",14)makeBtn("Midnight",0)makeBtn("Morning",6)
+end
+
+-- CRYSTAL TAB
+do local t=tabFrames.Crystal
+    for _,name in ipairs({"Blue Crystal","Green Crystal","Mythical Crystal","Frost Crystal","Inferno Crystal","Legends Crystal","Muscle Elite Crystal","Jungle Crystal"})do
+        local b=Instance.new("TextButton",t)b.Size=UDim2.new(0,110,0,16)b.BackgroundColor3=C.BTN b.TextColor3=C.BTNTXT b.Text=name b.Font=Enum.Font.GothamBold b.TextSize=11 b.BorderSizePixel=0
+        b.MouseButton1Click:Connect(function()pcall(function()rs.rEvents.openCrystalRemote:InvokeServer("openCrystal",name)end)end)
+    end
+end
+
+-- CHESTS TAB
+do local t=tabFrames.Chests
+    for _,name in ipairs({"Magma Chest","Mythical Chest","Golden Chest","Enchanted Chest","Legends Chest"})do
+        local b=Instance.new("TextButton",t)b.Size=UDim2.new(0,100,0,14)b.BackgroundColor3=C.BTN b.TextColor3=C.BTNTXT b.Text="Auto "..name b.Font=Enum.Font.GothamBold b.TextSize=11 b.BorderSizePixel=0
+        b.MouseButton1Click:Connect(function()pcall(function()rs.rEvents.checkChestRemote:InvokeServer(name)end)end)
+    end
+end
+
+-- PROTEINS TAB
+do local t=tabFrames.Proteins
+    local items={
+        {"toughBar", "TOUGH Bar"},
+        {"proteinBar", "Protein Bar"},
+        {"energyBar", "Energy Bar"},
+        {"proteinShake", "Protein Shake"},
+        {"ultraShake", "Ultra Shake"},
+        {"energyShake", "Energy Shake"}
+    }
+    local proteinEgg = {"proteinEgg", "Protein Egg"}
+    local autoEat, autoEatConn = false, nil
+    local autoEgg, autoEggConn = false, nil
+
+    local function startAutoEatProteins()
+        autoEat = true
+        autoEatConn = runs.Heartbeat:Connect(function()
+            local char = lp.Character
+            local ev = lp:FindFirstChild("muscleEvent")
+            if not char or not ev then return end
+            for _, pair in ipairs(items) do
+                local id, displayName = pair[1], pair[2]
+                for _, item in ipairs(lp.Backpack:GetChildren()) do
+                    if item.Name == displayName then
+                        item.Parent = char
+                        ev:FireServer(id, item)
+                    end
+                end
+                for _, item in ipairs(char:GetChildren()) do
+                    if item:IsA("Tool") and item.Name == displayName then
+                        ev:FireServer(id, item)
+                    end
+                end
+            end
+        end)
+    end
+    local function stopAutoEatProteins()
+        autoEat = false
+        if autoEatConn then autoEatConn:Disconnect() autoEatConn = nil end
+    end
+
+    local function startAutoEatProteinEgg()
+        autoEgg = true
+        autoEggConn = runs.Heartbeat:Connect(function()
+            local char = lp.Character
+            local ev = lp:FindFirstChild("muscleEvent")
+            if not char or not ev then return end
+            local id, displayName = proteinEgg[1], proteinEgg[2]
+            for _, item in ipairs(lp.Backpack:GetChildren()) do
+                if item.Name == displayName then
+                    item.Parent = char
+                    ev:FireServer(id, item)
+                end
+            end
+            for _, item in ipairs(char:GetChildren()) do
+                if item:IsA("Tool") and item.Name == displayName then
+                    ev:FireServer(id, item)
+                end
+            end
+        end)
+    end
+    local function stopAutoEatProteinEgg()
+        autoEgg = false
+        if autoEggConn then autoEggConn:Disconnect() autoEggConn = nil end
+    end
+
+    local autoEatBtn = Instance.new("TextButton", t)
+    autoEatBtn.Size = UDim2.new(0,110,0,18)
+    autoEatBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    autoEatBtn.TextColor3 = Color3.fromRGB(250,250,250)
+    autoEatBtn.Text = "Auto Eat Proteins: OFF"
+    autoEatBtn.Font = Enum.Font.GothamBold
+    autoEatBtn.TextSize = 11
+    autoEatBtn.BorderSizePixel = 0
+    Instance.new("UICorner", autoEatBtn).CornerRadius = UDim.new(1,0)
+    autoEatBtn.MouseButton1Click:Connect(function()
+        if autoEat then
+            stopAutoEatProteins()
+            autoEatBtn.Text = "Auto Eat Proteins: OFF"
+            autoEatBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+        else
+            startAutoEatProteins()
+            autoEatBtn.Text = "Auto Eat Proteins: ON"
+            autoEatBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
+        end
+    end)
+
+    local autoEggBtn = Instance.new("TextButton", t)
+    autoEggBtn.Size = UDim2.new(0, 140, 0, 18)
+    autoEggBtn.Position = UDim2.new(0, 0, 0, 20)
+    autoEggBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    autoEggBtn.TextColor3 = Color3.fromRGB(250, 250, 250)
+    autoEggBtn.Text = "Auto Eat Protein Egg: OFF"
+    autoEggBtn.Font = Enum.Font.GothamBold
+    autoEggBtn.TextSize = 11
+    autoEggBtn.BorderSizePixel = 0
+    Instance.new("UICorner", autoEggBtn).CornerRadius = UDim.new(1,0)
+    autoEggBtn.MouseButton1Click:Connect(function()
+        if autoEgg then
+            stopAutoEatProteinEgg()
+            autoEggBtn.Text = "Auto Eat Protein Egg: OFF"
+            autoEggBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+        else
+            startAutoEatProteinEgg()
+            autoEggBtn.Text = "Auto Eat Protein Egg: ON"
+            autoEggBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
+        end
+    end)
+
+    local eatAllBtn = Instance.new("TextButton", t)
+    eatAllBtn.Size = UDim2.new(0, 110, 0, 18)
+    eatAllBtn.Position = UDim2.new(0, 120, 0, 0)
+    eatAllBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    eatAllBtn.TextColor3 = Color3.fromRGB(250, 250, 250)
+    eatAllBtn.Text = "Eat All Proteins"
+    eatAllBtn.Font = Enum.Font.GothamBold
+    eatAllBtn.TextSize = 11
+    eatAllBtn.BorderSizePixel = 0
+    Instance.new("UICorner", eatAllBtn).CornerRadius = UDim.new(1,0)
+    eatAllBtn.MouseButton1Click:Connect(function()
+        local char = lp.Character
+        local ev = lp:FindFirstChild("muscleEvent")
+        if not char or not ev then return end
+        for _, pair in ipairs(items) do
+            local id, displayName = pair[1], pair[2]
+            for _, item in ipairs(lp.Backpack:GetChildren()) do
+                if item.Name == displayName then
+                    item.Parent = char
+                    ev:FireServer(id, item)
+                end
+            end
+            for _, item in ipairs(char:GetChildren()) do
+                if item:IsA("Tool") and item.Name == displayName then
+                    ev:FireServer(id, item)
+                end
+            end
+        end
+    end)
+
+    for _,pair in ipairs(items)do
+        local id,displayName=pair[1],pair[2]
+        local b=Instance.new("TextButton",t)b.Size=UDim2.new(0,110,0,18)b.BackgroundColor3=Color3.fromRGB(80,80,80)b.TextColor3=Color3.fromRGB(250,250,250)b.Text="Eat "..displayName;b.Font=Enum.Font.GothamBold;b.TextSize=11;b.BorderSizePixel=0
+        b.MouseButton1Click:Connect(function()
+            local item=lp.Backpack:FindFirstChild(displayName)or(lp.Character and lp.Character:FindFirstChild(displayName))
+            if item then item.Parent=lp.Character;local ev=lp:FindFirstChild("muscleEvent")if ev then ev:FireServer(id,item)end end
+        end)
+    end
+    do
+        local b=Instance.new("TextButton",t)
+        b.Size=UDim2.new(0,110,0,18)
+        b.Position=UDim2.new(0,0,0,40)
+        b.BackgroundColor3=Color3.fromRGB(100, 100, 100)
+        b.TextColor3=Color3.fromRGB(250,250,250)
+        b.Text="Eat Protein Egg"
+        b.Font=Enum.Font.GothamBold
+        b.TextSize=11
+        b.BorderSizePixel=0
+        Instance.new("UICorner", b).CornerRadius = UDim.new(1,0)
+        b.MouseButton1Click:Connect(function()
+            local char = lp.Character
+            local ev = lp:FindFirstChild("muscleEvent")
+            if not char or not ev then return end
+            local id, displayName = proteinEgg[1], proteinEgg[2]
+            local item = lp.Backpack:FindFirstChild(displayName) or char:FindFirstChild(displayName)
+            if item then
+                item.Parent = char
+                ev:FireServer(id, item)
+            end
+        end)
+    end
+end
+
+-- GYMS TAB
+do local t=tabFrames.Gyms
+    local gyms={"Jungle Bench","Jungle Squat","Muscle King Lift","King Boulder","Muscle King Squat","Legends Lift","Legends Pullup","Mythical Pullup","Mythical Press","Frost Press","Eternal Press","Legends Squat"}
+    local label=Instance.new("TextLabel",t)label.Size=UDim2.new(1,0,0,20)label.BackgroundTransparency=1 label.TextColor3=C.LBL label.Font=Enum.Font.GothamBold label.TextSize=12 label.Text="Select Gym, then Activate"
+    local dropdown=Instance.new("TextButton",t)dropdown.Size=UDim2.new(0,100,0,16)dropdown.Position=UDim2.new(0,0,0,22)dropdown.BackgroundColor3=C.DRP dropdown.TextColor3=C.LBL dropdown.Text="Select Gym ▼"dropdown.Font=Enum.Font.GothamBold dropdown.TextSize=11 dropdown.BorderSizePixel=0 dropdown.ZIndex=5
+    local list=Instance.new("Frame",t)list.Name="GymDropdownList"list.Position=UDim2.new(0,0,0,38)list.Size=UDim2.new(0,100,0,#gyms*16)list.BackgroundColor3=C.DRP list.Visible=false list.ZIndex=10 list.ClipsDescendants=true
+    local listLayout=Instance.new("UIListLayout",list)listLayout.SortOrder=Enum.SortOrder.LayoutOrder
+    local selectedName=nil
+    for i,v in ipairs(gyms)do
+        local opt=Instance.new("TextButton",list)opt.Size=UDim2.new(1,0,0,16)opt.BackgroundColor3=C.BTN opt.TextColor3=C.BTNTXT opt.Text=" "..v opt.Font=Enum.Font.GothamBold opt.TextSize=10 opt.BorderSizePixel=0 opt.ZIndex=11
+        opt.MouseButton1Click:Connect(function()selectedName=v;dropdown.Text=v.." ▼";list.Visible=false end)
+    end
+    dropdown.MouseButton1Click:Connect(function()list.Visible=not list.Visible end)list.Parent=t
+    local activate=Instance.new("TextButton",t)activate.Size=UDim2.new(0,70,0,16)activate.Position=UDim2.new(0,106,0,22)activate.BackgroundColor3=Color3.fromRGB(60,60,60)activate.TextColor3=C.BTNTXT activate.Text="Activate"activate.Font=Enum.Font.GothamBold activate.TextSize=11 activate.BorderSizePixel=0
+    activate.MouseButton1Click:Connect(function()
+        if not selectedName then return end
+        local machine=ws:FindFirstChild("machinesFolder")and ws.machinesFolder:FindFirstChild(selectedName)
+        if not machine then return end
+        local seat=machine:FindFirstChild("interactSeat")if not seat then return end
+        local char=lp.Character;if char and char:FindFirstChild("HumanoidRootPart")then char.HumanoidRootPart.CFrame=seat.CFrame+Vector3.new(0,2,0)end
+        rs.rEvents.machineInteractRemote:InvokeServer("useMachine",seat)
+        local repConn
+        repConn=runs.Heartbeat:Connect(function()
+            local remote=lp:FindFirstChild("muscleEvent")
+            if remote then for _=1,10 do remote:FireServer("rep")end end
+        end)
+        local humanoid=char and char:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid:GetPropertyChangedSignal("SeatPart"):Connect(function()
+                if not humanoid.SeatPart or humanoid.SeatPart~=seat then if repConn then repConn:Disconnect()repConn=nil end end
+            end)
+        end
+    end)
+end
+
+local function showTab(tab)
+    for k,f in pairs(tabFrames)do f.Visible=k==tab end
+    for k,btn in pairs(tabBtns)do btn.BackgroundColor3=k==tab and C.SBSEL or C.SB;btn.TextColor3=k==tab and C.SBTXTSEL or C.SBTXT end
+end
+for k,btn in pairs(tabBtns)do btn.MouseButton1Click:Connect(function()showTab(k)end)end
+showTab("Misc")
+
+local draggingBtn,dragStart,dragOffset
+showHideBtn.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        draggingBtn = true
+        dragStart = Vector2.new(input.Position.X, input.Position.Y)
+        dragOffset = Vector2.new(showHideBtn.Position.X.Offset, showHideBtn.Position.Y.Offset)
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                draggingBtn = false
+            end
+        end)
+    end
+end)
+uis.InputChanged:Connect(function(input)
+    if draggingBtn and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = Vector2.new(input.Position.X, input.Position.Y) - dragStart
+        showHideBtn.Position = UDim2.new(0, dragOffset.X + delta.X, 0, dragOffset.Y + delta.Y)
+    end
+end)
+
+local windowVisible = true
+showHideBtn.MouseButton1Click:Connect(function()
+    if draggingBtn then return end
+    windowVisible = not windowVisible
+    w.Visible = windowVisible
+    showHideBtn.Text = windowVisible and hideIcon or showIcon
+    if windowVisible then
+        updateShowHideBtnPos()
+    end
+end)
+
+close.MouseButton1Click:Connect(function()for _,t in ipairs(toggles)do pcall(t)end;g:Destroy()showHideGui:Destroy()end)
+
+lp.CharacterRemoving:Connect(function()
+    g.Parent=nil
+    showHideGui.Parent=nil
+end)
+lp.CharacterAdded:Connect(function()
+    task.wait(1)
+    if g and not g.Parent then g.Parent=lp:WaitForChild("PlayerGui") end
+    if showHideGui and not showHideGui.Parent then showHideGui.Parent=lp:WaitForChild("PlayerGui") end
+end)
+
+do
+    local dragging=false
+    local dragInput,mousePos,framePos
+    h.InputBegan:Connect(function(input)
+        if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then
+            dragging=true;mousePos=input.Position;framePos=w.Position
+            input.Changed:Connect(function()if input.UserInputState==Enum.UserInputState.End then dragging=false end end)
+        end
+    end)
+    h.InputChanged:Connect(function(input)
+        if input.UserInputType==Enum.UserInputType.MouseMovement or input.UserInputType==Enum.UserInputType.Touch then dragInput=input end
+    end)
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input==dragInput and dragging then
+            w.Position=UDim2.new(framePos.X.Scale,framePos.X.Offset+(input.Position-mousePos).X,framePos.Y.Scale,framePos.Y.Offset+(input.Position-mousePos).Y)
+        end
+    end)
+end
